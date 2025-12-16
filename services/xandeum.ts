@@ -11,19 +11,25 @@ export interface NetworkResponse {
   lastUpdated: Date;
 }
 
-// The Mainnet Xandeum RPC (from their docs)
-const XANDEUM_RPC = 'https://rpc.xandeum.network';
-const SOLANA_RPC = 'https://api.mainnet-beta.solana.com';
+// RPC endpoints - can be overridden via environment variables
+const XANDEUM_RPC = process.env.NEXT_PUBLIC_XANDEUM_RPC || 'https://rpc.xandeum.network';
+const SOLANA_RPC = process.env.NEXT_PUBLIC_SOLANA_RPC || 'https://api.mainnet-beta.solana.com';
 
 /**
- * Attempts to fetch real node data from Xandeum RPC
- * Falls back to simulation mode if fetch fails
+ * Fetches network status from Xandeum RPC endpoints
+ * 
+ * Attempts multiple strategies in order:
+ * 1. Direct Xandeum RPC (getClusterNodes)
+ * 2. Alternative method (getClusterInfo)
+ * 3. Solana Mainnet gossip connection
+ * 4. Falls back to simulation mode if all fail
+ * 
+ * @returns {Promise<NetworkResponse>} Network data with nodes, status, and metadata
+ * @throws Never throws - always returns a valid response (simulation mode on failure)
  */
 export async function fetchNetworkStatus(): Promise<NetworkResponse> {
   // Strategy A: Direct Xandeum RPC (The "Golden Path")
   try {
-    console.log("🔍 Attempting to connect to Xandeum RPC...");
-    
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
@@ -49,14 +55,12 @@ export async function fetchNetworkStatus(): Promise<NetworkResponse> {
     
     // Handle RPC errors
     if (data.error) {
-      console.warn("⚠️ Xandeum RPC error:", data.error);
       throw new Error(data.error.message || "RPC error");
     }
 
     const result = data.result;
 
     if (result && Array.isArray(result) && result.length > 0) {
-      console.log(`✅ Connected to Xandeum Mainnet via RPC - Found ${result.length} nodes`);
       const nodes = transformNodes(result);
       
       if (nodes.length > 0) {
@@ -96,7 +100,6 @@ export async function fetchNetworkStatus(): Promise<NetworkResponse> {
     if (response.ok) {
       const data = await response.json();
       if (data.result && data.result.clusterNodes && Array.isArray(data.result.clusterNodes)) {
-        console.log(`✅ Found nodes via getClusterInfo - ${data.result.clusterNodes.length} nodes`);
         const nodes = transformNodes(data.result.clusterNodes);
         
         if (nodes.length > 0) {
@@ -145,14 +148,12 @@ export async function fetchNetworkStatus(): Promise<NetworkResponse> {
     }
     
     const nodes = data.result || [];
-    console.log(`📡 Retrieved ${nodes.length} nodes from Solana gossip`);
     
     // Filter for nodes that look like Xandeum (custom version strings or all if no filter works)
     // Since Xandeum is Solana-compatible, we'll accept all nodes but prioritize those with versions
     const validNodes = nodes.filter((n: any) => n.gossip || n.tpu || n.rpc);
     
     if (validNodes.length > 0) {
-      console.log(`✅ Using ${validNodes.length} nodes from Solana gossip`);
       const transformedNodes = transformNodes(validNodes);
       
       if (transformedNodes.length > 0) {
@@ -175,6 +176,9 @@ export async function fetchNetworkStatus(): Promise<NetworkResponse> {
 
 /**
  * Transforms Solana cluster nodes to PNode format
+ * 
+ * @param {any[]} clusterNodes - Raw cluster node data from RPC
+ * @returns {PNode[]} Array of transformed PNode objects
  */
 function transformNodes(clusterNodes: any[]): PNode[] {
   return clusterNodes
@@ -188,7 +192,6 @@ function transformNodes(clusterNodes: any[]): PNode[] {
         // Try to extract IP from any available address
         const address = gossip || tpu || rpc;
         if (!address) {
-          console.warn("Node missing address info:", node);
           return null;
         }
 
@@ -199,7 +202,6 @@ function transformNodes(clusterNodes: any[]): PNode[] {
         // Extract pubkey - handle both string and PublicKey object
         let pubkey = node.pubkey || node.identity || node.publicKey;
         if (!pubkey) {
-          console.warn("Node missing pubkey:", node);
           return null;
         }
         
@@ -230,7 +232,6 @@ function transformNodes(clusterNodes: any[]): PNode[] {
           location: location.location,
         };
       } catch (error) {
-        console.warn("Error transforming node:", error, node);
         return null;
       }
     })
@@ -250,37 +251,6 @@ function generateMockNodes(): NetworkResponse {
   };
 }
 
-/**
- * Attempts to fetch real node data from various Xandeum endpoints (DEPRECATED - kept for reference)
- */
-async function attemptRealDataFetch(): Promise<PNode[] | null> {
-  const endpoints = [
-    // Try custom Xandeum API endpoints
-    () => fetchXandeumAPI("/api/pnodes"),
-    () => fetchXandeumAPI("/api/nodes"),
-    () => fetchXandeumAPI("/api/storage-nodes"),
-    () => fetchXandeumAPI("/api/v1/nodes"),
-    // Try Solana RPC getClusterNodes
-    () => fetchSolanaRPC("https://rpc.xandeum.network"),
-    () => fetchSolanaRPC("https://api.mainnet-beta.solana.com"),
-    () => fetchSolanaRPC("https://api.devnet.solana.com"),
-  ];
-
-  for (const endpointFn of endpoints) {
-    try {
-      const nodes = await endpointFn();
-      if (nodes && nodes.length > 0) {
-        console.log(`✅ Successfully fetched ${nodes.length} nodes from real network`);
-        return nodes;
-      }
-    } catch (error) {
-      // Continue to next endpoint
-      continue;
-    }
-  }
-
-  return null;
-}
 
 /**
  * Fetches nodes from custom Xandeum API endpoint

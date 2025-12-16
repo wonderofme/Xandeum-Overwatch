@@ -22,6 +22,9 @@ function calculatePerformanceScore(node: PNode): number {
 
 /**
  * Finds the top performing node based on storage + uptime
+ * 
+ * @param {PNode[]} nodes - Array of network nodes
+ * @returns {PNode | null} Top performing node or null if no active nodes
  */
 export function findTopNode(nodes: PNode[]): PNode | null {
   if (nodes.length === 0) {
@@ -52,6 +55,10 @@ export function findTopNode(nodes: PNode[]): PNode | null {
 
 /**
  * Gets the top N performing nodes sorted by performance score
+ * 
+ * @param {PNode[]} nodes - Array of network nodes
+ * @param {number} count - Number of top nodes to return (default: 25)
+ * @returns {PNode[]} Array of top performing nodes
  */
 export function getTopNodes(nodes: PNode[], count: number = 25): PNode[] {
   if (nodes.length === 0) {

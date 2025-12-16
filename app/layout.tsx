@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Rajdhani, Share_Tech_Mono } from "next/font/google";
 import "./globals.css";
 import { Background } from "@/components/layout/Background";
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 
 const rajdhani = Rajdhani({
   weight: ['500', '600', '700'],
@@ -28,8 +29,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${rajdhani.variable} ${shareTechMono.variable}`}>
       <body className="bg-[#030712] text-white antialiased selection:bg-cyan-500/30">
-        <Background />
-        <div className="relative z-10">{children}</div>
+        <ErrorBoundary>
+          <Background />
+          <div className="relative z-10">{children}</div>
+        </ErrorBoundary>
       </body>
     </html>
   );

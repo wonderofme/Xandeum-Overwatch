@@ -4,6 +4,14 @@ import { fetchNetworkStatus, NetworkResponse } from '@/services/xandeum';
 export const dynamic = 'force-dynamic';
 export const revalidate = 30; // Revalidate every 30 seconds
 
+/**
+ * API route handler for fetching network status
+ * 
+ * Fetches network data from Xandeum RPC endpoints and returns it as JSON.
+ * Always returns a valid response (falls back to simulation mode on error).
+ * 
+ * @returns {Promise<NextResponse>} JSON response with network data
+ */
 export async function GET() {
   try {
     const networkData = await fetchNetworkStatus();

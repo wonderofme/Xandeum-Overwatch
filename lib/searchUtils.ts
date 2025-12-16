@@ -1,8 +1,12 @@
 import { PNode } from "@/services/nodeService";
 
 /**
- * Searches nodes by pubkey, IP, or location
+ * Searches nodes by pubkey, IP, location, or status
  * Case-insensitive partial matching
+ * 
+ * @param {PNode[]} nodes - Array of network nodes to search
+ * @param {string} query - Search query string
+ * @returns {PNode[]} Filtered array of matching nodes
  */
 export function searchNodes(nodes: PNode[], query: string): PNode[] {
   if (!query.trim()) {

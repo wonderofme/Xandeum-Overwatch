@@ -107,7 +107,6 @@ export function StatsRow({ totalCapacity, activeNodes, networkHealth, topNode, o
             onClick={onTopNodesClick ? (e) => {
               e.preventDefault();
               e.stopPropagation();
-              console.log("Top Nodes clicked");
               onTopNodesClick();
             } : undefined}
             className={cn(

@@ -300,18 +300,9 @@ export default function Home() {
               <AnalyticsView
                 nodes={allNodes}
                 currentCapacity={totalCapacity}
-                onExpandAnalytics={() => {
-                  console.log("Setting Analytics expanded to true");
-                  setIsAnalyticsExpanded(true);
-                }}
-                onExpandDecentralization={() => {
-                  console.log("Setting Decentralization expanded to true");
-                  setIsDecentralizationExpanded(true);
-                }}
-                onExpandVersionHealth={() => {
-                  console.log("Setting Version Health expanded to true");
-                  setIsVersionHealthExpanded(true);
-                }}
+                onExpandAnalytics={() => setIsAnalyticsExpanded(true)}
+                onExpandDecentralization={() => setIsDecentralizationExpanded(true)}
+                onExpandVersionHealth={() => setIsVersionHealthExpanded(true)}
               />
             </div>
           )}

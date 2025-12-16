@@ -169,7 +169,6 @@ export function AnalyticsView({
         if (!target.closest('button') && !target.closest('input') && !target.closest('select') && !target.closest('[data-no-expand]')) {
           e.preventDefault();
           e.stopPropagation();
-          console.log("Analytics container clicked");
           onExpandAnalytics();
         }
       } : undefined}
@@ -191,7 +190,6 @@ export function AnalyticsView({
             if (!target.closest('button') && !target.closest('input') && !target.closest('select')) {
               e.preventDefault();
               e.stopPropagation();
-              console.log("Capacity Growth card clicked");
               onExpandAnalytics();
             }
           } : undefined}
@@ -238,7 +236,6 @@ export function AnalyticsView({
           onClick={onExpandDecentralization ? (e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log("Decentralization expand clicked");
             onExpandDecentralization();
           } : undefined}
         >
@@ -280,7 +277,6 @@ export function AnalyticsView({
           onClick={onExpandVersionHealth ? (e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log("Version Health expand clicked");
             onExpandVersionHealth();
           } : undefined}
         >
