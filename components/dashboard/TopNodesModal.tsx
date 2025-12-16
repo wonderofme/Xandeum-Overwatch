@@ -87,7 +87,7 @@ export function TopNodesModal({ isOpen, onClose, nodes }: TopNodesModalProps) {
                           "grid grid-cols-12 gap-4 px-4 py-3 rounded-lg",
                           "bg-white/[0.02] border border-white/5",
                           "hover:bg-white/[0.05] hover:border-white/10",
-                          "transition-all",
+                          "transition-all overflow-hidden",
                           index === 0 && "border-amber-500/50 bg-amber-500/5"
                         )}
                       >
@@ -128,7 +128,9 @@ export function TopNodesModal({ isOpen, onClose, nodes }: TopNodesModalProps) {
                         </div>
 
                         {/* IP */}
-                        <div className="col-span-1 font-mono text-xs text-white/50">{node.ip}</div>
+                        <div className="col-span-1 font-mono text-xs text-white/50 overflow-hidden text-ellipsis whitespace-nowrap min-w-0" title={node.ip}>
+                          {node.ip}
+                        </div>
                       </motion.div>
                     );
                   })}
