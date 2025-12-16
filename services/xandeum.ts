@@ -119,19 +119,41 @@ export async function fetchNetworkStatus(): Promise<NetworkResponse> {
   // pNodes often broadcast on standard gossip but with specific version tags
   try {
     console.log("🔍 Trying Solana Mainnet connection...");
-    const connection = new Connection(SOLANA_RPC, {
-      commitment: 'confirmed',
-      httpHeaders: {
-        'Content-Type': 'application/json',
-      },
+    
+    // Use fetch-based approach for serverless compatibility
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout for Solana
+    
+    const response = await fetch(SOLANA_RPC, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'getClusterNodes',
+        params: []
+      }),
+      signal: controller.signal
     });
     
-    const nodes = await connection.getClusterNodes();
+    clearTimeout(timeoutId);
+    
+    if (!response.ok) {
+      throw new Error(`Solana RPC responded with status ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    if (data.error) {
+      throw new Error(data.error.message || "Solana RPC error");
+    }
+    
+    const nodes = data.result || [];
     console.log(`📡 Retrieved ${nodes.length} nodes from Solana gossip`);
     
     // Filter for nodes that look like Xandeum (custom version strings or all if no filter works)
     // Since Xandeum is Solana-compatible, we'll accept all nodes but prioritize those with versions
-    const validNodes = nodes.filter(n => n.gossip || n.tpu || n.rpc);
+    const validNodes = nodes.filter((n: any) => n.gossip || n.tpu || n.rpc);
     
     if (validNodes.length > 0) {
       console.log(`✅ Using ${validNodes.length} nodes from Solana gossip`);

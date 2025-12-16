@@ -84,8 +84,15 @@ export default function Home() {
         if (!response.ok) {
           throw new Error(`API responded with status ${response.status}`);
         }
-        const data: NetworkResponse = await response.json();
-        setNetworkData(data);
+        const data = await response.json();
+        
+        // Convert lastUpdated string back to Date object
+        const networkData: NetworkResponse = {
+          ...data,
+          lastUpdated: new Date(data.lastUpdated)
+        };
+        
+        setNetworkData(networkData);
       } catch (error) {
         console.error("Failed to load network data:", error);
         // Fallback to simulation mode
