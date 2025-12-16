@@ -25,9 +25,10 @@ export function Navbar({ liveStatus, onSearchClick }: NavbarProps) {
     >
       <div className="container mx-auto max-w-7xl flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <motion.div
+        <motion.button
           whileHover={{ scale: 1.05 }}
-          className="flex items-center gap-3"
+          onClick={() => window.location.reload()}
+          className="flex items-center gap-3 cursor-pointer bg-transparent border-none p-0"
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 backdrop-blur-sm border border-white/20">
             <Radar className="h-6 w-6 text-white/90" />
@@ -35,16 +36,10 @@ export function Navbar({ liveStatus, onSearchClick }: NavbarProps) {
           <span className="text-xl font-sans font-bold text-white">
             Xandeum <span className="font-light text-white/50">Overwatch</span>
           </span>
-        </motion.div>
+        </motion.button>
 
         {/* Desktop Navigation */}
         <div className="hidden items-center gap-6 md:flex">
-          <a
-            href="/"
-            className="text-sm font-medium text-white/60 transition-colors hover:text-white/90"
-          >
-            Dashboard
-          </a>
           <a
             href="#charts"
             className="text-sm font-medium text-white/60 transition-colors hover:text-white/90"
@@ -114,12 +109,6 @@ export function Navbar({ liveStatus, onSearchClick }: NavbarProps) {
           className="border-t border-white/10 bg-white/[0.02] backdrop-blur-xl md:hidden"
         >
           <div className="container mx-auto flex flex-col gap-4 px-4 py-4">
-            <a
-              href="/"
-              className="text-sm font-medium text-white/60 transition-colors hover:text-white/90"
-            >
-              Dashboard
-            </a>
             <a
               href="#charts"
               className="text-sm font-medium text-white/60 transition-colors hover:text-white/90"
