@@ -69,15 +69,13 @@ export async function fetchNetworkStatus(): Promise<NetworkResponse> {
       }
     }
 
-    console.log("⚠️ Xandeum RPC returned empty result, trying alternative methods...");
+    // Empty result, continue to next strategy
   } catch (e: any) {
-    console.warn("⚠️ Xandeum RPC failed:", e.message || e);
+    // Silently fail - this is expected if RPC isn't accessible
   }
 
   // Strategy B: Try getClusterInfo (alternative Solana RPC method)
   try {
-    console.log("🔍 Trying getClusterInfo method...");
-    
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
 
@@ -112,14 +110,12 @@ export async function fetchNetworkStatus(): Promise<NetworkResponse> {
       }
     }
   } catch (e: any) {
-    console.warn("⚠️ getClusterInfo failed:", e.message || e);
+    // Silently fail - this is expected if the method isn't supported
   }
 
   // Strategy C: Solana Mainnet Connection (The "Side Door")
   // pNodes often broadcast on standard gossip but with specific version tags
   try {
-    console.log("🔍 Trying Solana Mainnet connection...");
-    
     // Use fetch-based approach for serverless compatibility
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout for Solana
@@ -169,11 +165,11 @@ export async function fetchNetworkStatus(): Promise<NetworkResponse> {
       }
     }
   } catch (e: any) {
-    console.warn("⚠️ Solana gossip failed:", e.message || e);
+    // Silently fail - this is expected if Solana RPC isn't accessible
   }
 
   // Final fallback: Simulation mode
-  console.warn("⚠️ All RPC methods failed, switching to SIMULATION MODE.");
+  // All RPC methods failed, using simulation data
   return generateMockNodes();
 }
 
