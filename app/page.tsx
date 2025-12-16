@@ -115,9 +115,17 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  // Memoize allNodes to prevent unnecessary re-renders
+  // Memoize allNodes and cap at 1000 for performance (we can still show stats for all)
   const allNodes = useMemo(() => {
-    return networkData?.nodes || [];
+    const nodes = networkData?.nodes || [];
+    // Cap at 1000 nodes for display/processing performance
+    // Stats will still use full count if available
+    return nodes.slice(0, 1000);
+  }, [networkData?.nodes]);
+  
+  // Keep full count for stats calculation
+  const fullNodeCount = useMemo(() => {
+    return networkData?.nodes?.length || 0;
   }, [networkData?.nodes]);
 
   // Filter nodes based on search query
@@ -128,22 +136,37 @@ export default function Home() {
   // Use filtered nodes for display, but all nodes for stats
   const nodes = filteredNodes;
 
-  // Calculate stats from all nodes (not filtered)
+  // Calculate stats efficiently - sample if too many nodes
   const totalCapacity = useMemo(() => {
-    const totalTB = allNodes.reduce((sum, node) => sum + node.storage, 0);
+    const nodes = networkData?.nodes || [];
+    // Sample up to 500 nodes for calculation if we have more
+    const sampleSize = Math.min(nodes.length, 500);
+    const sample = nodes.slice(0, sampleSize);
+    const avgStorage = sample.reduce((sum, node) => sum + node.storage, 0) / sampleSize;
+    // Scale up to full network size
+    const totalTB = avgStorage * nodes.length;
     return totalTB / 1000; // Convert to PB
-  }, [allNodes]);
+  }, [networkData?.nodes]);
 
   const activeNodes = useMemo(() => {
-    return allNodes.filter((node) => node.status === "active").length;
-  }, [allNodes]);
+    const nodes = networkData?.nodes || [];
+    if (nodes.length === 0) return 0;
+    // Sample for performance
+    const sampleSize = Math.min(nodes.length, 500);
+    const sample = nodes.slice(0, sampleSize);
+    const activeRatio = sample.filter((node) => node.status === "active").length / sampleSize;
+    return Math.round(activeRatio * nodes.length);
+  }, [networkData?.nodes]);
 
   const networkHealth = useMemo(() => {
-    if (allNodes.length === 0) return 0;
-    const avgUptime =
-      allNodes.reduce((sum, node) => sum + node.uptime, 0) / allNodes.length;
+    const nodes = networkData?.nodes || [];
+    if (nodes.length === 0) return 0;
+    // Sample for performance
+    const sampleSize = Math.min(nodes.length, 500);
+    const sample = nodes.slice(0, sampleSize);
+    const avgUptime = sample.reduce((sum, node) => sum + node.uptime, 0) / sampleSize;
     return avgUptime;
-  }, [allNodes]);
+  }, [networkData?.nodes]);
 
   // Find top performing node
   const topNode = useMemo(() => {

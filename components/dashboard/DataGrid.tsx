@@ -17,7 +17,7 @@ type ViewMode = "all" | "favorites";
 export function DataGrid({ nodes, onNodeHover }: DataGridProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 25; // Limit to 25 nodes per page for performance
+  const itemsPerPage = 15; // Reduced to 15 nodes per page for better performance with large datasets
   const { bookmarks, toggleBookmark, isBookmarked } = useBookmarkStore();
 
   // Reset to page 1 when view mode changes

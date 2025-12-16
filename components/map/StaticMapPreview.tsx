@@ -23,7 +23,7 @@ export function StaticMapPreview({ nodes, onClick }: StaticMapPreviewProps) {
   const mapRef = useRef<L.Map | null>(null);
 
   // Filter out nodes with invalid coordinates
-  const validNodes = nodes.filter(
+  const allValidNodes = nodes.filter(
     (node) =>
       typeof node.lat === "number" &&
       typeof node.lng === "number" &&
@@ -36,15 +36,21 @@ export function StaticMapPreview({ nodes, onClick }: StaticMapPreviewProps) {
       node.lng >= -180 &&
       node.lng <= 180
   );
+  
+  // Limit to 200 markers for preview (sample if more)
+  const validNodes = allValidNodes.length > 200 
+    ? allValidNodes.slice(0, 200) 
+    : allValidNodes;
 
-  // Calculate center from valid nodes, or use default world center
+  // Calculate center from sample for performance
+  const sampleForCenter = allValidNodes.slice(0, 100);
   const centerLat =
-    validNodes.length > 0
-      ? validNodes.reduce((sum, node) => sum + node.lat, 0) / validNodes.length
+    sampleForCenter.length > 0
+      ? sampleForCenter.reduce((sum, node) => sum + node.lat, 0) / sampleForCenter.length
       : 20;
   const centerLng =
-    validNodes.length > 0
-      ? validNodes.reduce((sum, node) => sum + node.lng, 0) / validNodes.length
+    sampleForCenter.length > 0
+      ? sampleForCenter.reduce((sum, node) => sum + node.lng, 0) / sampleForCenter.length
       : 0;
 
   // Create custom glowing green pulse marker

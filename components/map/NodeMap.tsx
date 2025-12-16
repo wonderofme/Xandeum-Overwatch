@@ -47,7 +47,7 @@ interface NodeMapProps {
 
 export function NodeMap({ nodes, hoveredNode }: NodeMapProps) {
   // Filter out nodes with invalid coordinates
-  const validNodes = nodes.filter(
+  const allValidNodes = nodes.filter(
     (node) =>
       typeof node.lat === "number" &&
       typeof node.lng === "number" &&
@@ -60,15 +60,21 @@ export function NodeMap({ nodes, hoveredNode }: NodeMapProps) {
       node.lng >= -180 &&
       node.lng <= 180
   );
+  
+  // Limit to 500 markers for performance (sample if more)
+  const validNodes = allValidNodes.length > 500 
+    ? allValidNodes.slice(0, 500) 
+    : allValidNodes;
 
-  // Calculate center from valid nodes, or use default world center
+  // Calculate center from all valid nodes (sample for performance)
+  const sampleForCenter = allValidNodes.slice(0, 100);
   const centerLat =
-    validNodes.length > 0
-      ? validNodes.reduce((sum, node) => sum + node.lat, 0) / validNodes.length
+    sampleForCenter.length > 0
+      ? sampleForCenter.reduce((sum, node) => sum + node.lat, 0) / sampleForCenter.length
       : 20;
   const centerLng =
-    validNodes.length > 0
-      ? validNodes.reduce((sum, node) => sum + node.lng, 0) / validNodes.length
+    sampleForCenter.length > 0
+      ? sampleForCenter.reduce((sum, node) => sum + node.lng, 0) / sampleForCenter.length
       : 0;
 
   // Create custom glowing green pulse marker
