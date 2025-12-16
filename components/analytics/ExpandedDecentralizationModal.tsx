@@ -157,7 +157,7 @@ export function ExpandedDecentralizationModal({
                         outerRadius={150}
                         paddingAngle={3}
                         dataKey="value"
-                        label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(1)}%)`}
+                        label={({ name, value, percent }) => `${name}: ${value}${percent !== undefined ? ` (${(percent * 100).toFixed(1)}%)` : ''}`}
                         labelLine={false}
                       >
                         {regionData.map((entry, index) => (

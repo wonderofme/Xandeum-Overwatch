@@ -73,7 +73,10 @@ export function StaticMapPreview({ nodes, onClick }: StaticMapPreviewProps) {
       mapRef.current.scrollWheelZoom.disable();
       mapRef.current.boxZoom.disable();
       mapRef.current.keyboard.disable();
-      if (mapRef.current.tap) mapRef.current.tap.disable();
+      // tap might not exist in all Leaflet versions, check safely
+      if ('tap' in mapRef.current && (mapRef.current as any).tap) {
+        (mapRef.current as any).tap.disable();
+      }
     }
   }, []);
 
@@ -101,7 +104,10 @@ export function StaticMapPreview({ nodes, onClick }: StaticMapPreviewProps) {
             map.scrollWheelZoom.disable();
             map.boxZoom.disable();
             map.keyboard.disable();
-            if (map.tap) map.tap.disable();
+            // tap might not exist in all Leaflet versions, check safely
+            if ('tap' in map && (map as any).tap) {
+              (map as any).tap.disable();
+            }
           }
         }}
       >

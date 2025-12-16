@@ -105,7 +105,10 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  const allNodes = networkData?.nodes || [];
+  // Memoize allNodes to prevent unnecessary re-renders
+  const allNodes = useMemo(() => {
+    return networkData?.nodes || [];
+  }, [networkData?.nodes]);
 
   // Filter nodes based on search query
   const filteredNodes = useMemo(() => {
