@@ -1,81 +1,63 @@
-# Xandeum Overwatch
+# 🛡️ Xandeum Overwatch
 
-A premium, real-time analytics platform for monitoring the Xandeum Storage Network. Built with Next.js 14, TypeScript, Tailwind CSS, and Framer Motion.
+**The Next-Generation Command Center for the Xandeum Storage Network.**
 
-## Features
+> *Standard explorers show you lists. Overwatch shows you the network.*
 
-- **Ethereal Design**: Deep atmospheric glows, floating glass panels, and slow-breathing gradients
-- **Aurora Background**: Animated aurora borealis effect with noise texture overlay
-- **Glass Morphism**: Premium glass card components with backdrop blur
-- **Animated Stats**: Count-up animations for network statistics
-- **Node Grid**: Bento-style responsive grid with pulsing status indicators
-- **Shimmer Effects**: Animated progress bars with shimmer effects
+**🔗 Live Uplink:** https://xandeum-overwatch.vercel.app/
 
-## Tech Stack
+**📺 System Demo:** [INSERT_YOUR_YOUTUBE_LINK_HERE]
 
-- **Framework**: Next.js 14 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS + clsx + tailwind-merge
-- **Motion**: Framer Motion
-- **Icons**: Lucide React
+---
 
-## Getting Started
+## ⚡ Mission Brief
 
-1. Install dependencies:
-```bash
-npm install
-```
+We built **Overwatch** to solve the "Excel Sheet Problem." Most node explorers are boring tables. Xandeum is a high-tech storage network, and it deserves a high-tech interface.
 
-2. Run the development server:
-```bash
-npm run dev
-```
+**Overwatch** replaces pagination with immersion. It is a single-screen "Glass Cockpit" designed for node operators who need instant situational awareness.
 
-3. Open [http://localhost:3000](http://localhost:3000) in your browser.
+## 🏆 Key Capabilities
 
-## Project Structure
+### 1. 🌍 The "Dark Matter" Recon Map
 
-```
-├── app/
-│   ├── globals.css          # Global styles with aurora and noise effects
-│   ├── layout.tsx           # Root layout with Background component
-│   └── page.tsx             # Main dashboard page
-├── components/
-│   ├── dashboard/
-│   │   ├── Hero.tsx         # Hero section with search bar
-│   │   ├── StatsRow.tsx     # Animated statistics cards
-│   │   └── NodeGrid.tsx     # Bento-style node grid
-│   ├── layout/
-│   │   └── Background.tsx   # Aurora and noise overlay
-│   └── ui/
-│       └── GlassCard.tsx    # Reusable glass morphism card
-├── lib/
-│   └── utils.ts             # Utility functions (cn)
-└── services/
-    └── nodeService.ts       # Mock node data service
-```
+A custom-engineered 3D visualization that renders Xandeum nodes as active signals on a dark-mode globe.
 
-## Design Philosophy
+- **Satellite View:** Filters out map noise to focus purely on node distribution.
 
-The UI is designed to feel "Ethereal," "Alive," and "Premium" - inspired by Gemini 1.5 Pro meets Minority Report. Key design elements include:
+- **Interactive Intel:** Click any signal to expand node telemetry.
 
-- Deep void background (#0a0a0f)
-- Aurora borealis gradient animation
-- 4% opacity noise texture overlay
-- Glass morphism with backdrop blur
-- Smooth animations and transitions
-- Pulsing status indicators
-- Shimmer effects on progress bars
+### 2. ⭐ Client-Side "Targeting" (Bookmarks)
 
-## Mock Data
+Zero-login persistence.
 
-The application currently uses mock data from `services/nodeService.ts`, which generates 50 nodes with:
-- Random IP addresses
-- Storage capacity (1TB - 500TB)
-- Uptime percentage (85% - 99.9%)
-- Global geographic distribution
-- Active/offline status
+- Users can "Target" (Bookmark) specific nodes to track them.
 
-Replace the mock service with real Xandeum RPC calls when ready.
+- Data is stored locally in the browser, respecting user privacy while providing persistence across sessions.
 
+### 3. 📊 Tactical Analytics HUD
 
+Real-time visualization of network health.
+
+- **Capacity Modeling:** 30-day projection of storage growth.
+
+- **Decentralization Radar:** Visual breakdown of node regions.
+
+- **Gamification:** Automatic detection of the "Network Leader" (Top Node).
+
+---
+
+## 🛠️ Tech Stack
+
+- **Core:** Next.js 14 (App Router)
+
+- **UI System:** Tailwind CSS + Framer Motion (Glassmorphism)
+
+- **Typography:** Rajdhani (Headers) + Share Tech Mono (Data)
+
+- **State:** Zustand + LocalStorage Persistence
+
+- **Data:** Hybrid RPC Fetcher (Xandeum Mainnet + Fallback Simulation)
+
+---
+
+*Submitted for the Xandeum "Build Analytics Platform" Bounty.*
