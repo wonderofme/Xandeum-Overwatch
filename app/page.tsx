@@ -110,8 +110,8 @@ export default function Home() {
 
     loadNetworkData();
 
-    // Refresh every 30 seconds
-    const interval = setInterval(loadNetworkData, 30000);
+    // Refresh every 60 seconds (reduced frequency for better performance)
+    const interval = setInterval(loadNetworkData, 60000);
     return () => clearInterval(interval);
   }, []);
 

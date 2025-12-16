@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 import { PNode } from "@/services/nodeService";
@@ -16,15 +16,28 @@ type ViewMode = "all" | "favorites";
 
 export function DataGrid({ nodes, onNodeHover }: DataGridProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 25; // Limit to 25 nodes per page for performance
   const { bookmarks, toggleBookmark, isBookmarked } = useBookmarkStore();
 
+  // Reset to page 1 when view mode changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [viewMode]);
+
   // Filter nodes based on view mode
-  const displayedNodes =
+  const allDisplayedNodes =
     viewMode === "favorites"
       ? nodes.filter((node) => isBookmarked(node.pubkey))
       : nodes;
 
-  const activeCount = displayedNodes.filter((n) => n.status === "active").length;
+  // Paginate nodes
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const displayedNodes = allDisplayedNodes.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(allDisplayedNodes.length / itemsPerPage);
+
+  const activeCount = allDisplayedNodes.filter((n) => n.status === "active").length;
 
   return (
     <div className="space-y-4">
@@ -34,10 +47,9 @@ export function DataGrid({ nodes, onNodeHover }: DataGridProps) {
           <h2 className="text-2xl font-sans font-bold text-white/90 tracking-tight">NETWORK NODES</h2>
           <div className="flex items-center gap-2">
             <div className="relative flex items-center justify-center">
-              <div className="absolute w-2 h-2 rounded-full bg-emerald-500 animate-ping opacity-75" />
               <div className="relative w-1.5 h-1.5 rounded-full bg-emerald-500" />
             </div>
-            <span className="text-xs font-mono text-emerald-400 uppercase tracking-wider animate-pulse">
+            <span className="text-xs font-mono text-emerald-400 uppercase tracking-wider">
               LIVE
             </span>
           </div>
@@ -69,7 +81,7 @@ export function DataGrid({ nodes, onNodeHover }: DataGridProps) {
             </button>
           </div>
           <div className="text-sm text-white/60 font-mono">
-            {activeCount} / {displayedNodes.length} Active
+            {activeCount} / {allDisplayedNodes.length} Active
           </div>
         </div>
       </div>
@@ -107,9 +119,9 @@ export function DataGrid({ nodes, onNodeHover }: DataGridProps) {
           return (
             <motion.div
               key={node.pubkey}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.02 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.2 }}
               onMouseEnter={() => onNodeHover(node)}
               onMouseLeave={() => onNodeHover(null)}
               className={cn(
@@ -219,6 +231,43 @@ export function DataGrid({ nodes, onNodeHover }: DataGridProps) {
             })
             )}
           </div>
+          
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
+              <div className="text-sm text-white/60 font-mono">
+                Page {currentPage} of {totalPages} ({allDisplayedNodes.length} total nodes)
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className={cn(
+                    "px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded transition-all",
+                    "bg-white/5 border border-white/10",
+                    currentPage === 1
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-white/10 text-white"
+                  )}
+                >
+                  Previous
+                </button>
+                <button
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className={cn(
+                    "px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded transition-all",
+                    "bg-white/5 border border-white/10",
+                    currentPage === totalPages
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-white/10 text-white"
+                  )}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

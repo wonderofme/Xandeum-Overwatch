@@ -75,10 +75,7 @@ export function Navbar({ liveStatus, onSearchClick }: NavbarProps) {
             <div className="flex items-center gap-2 pl-4 border-l border-white/10">
               <div className="relative flex items-center justify-center">
                 {liveStatus.isLive ? (
-                  <>
-                    <div className="absolute w-2 h-2 rounded-full bg-emerald-500 animate-ping opacity-75" />
-                    <div className="relative w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  </>
+                  <div className="relative w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 ) : (
                   <div className="w-1.5 h-1.5 rounded-full bg-yellow-500" />
                 )}
