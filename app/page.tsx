@@ -79,13 +79,16 @@ export default function Home() {
     async function loadNetworkData() {
       setIsLoading(true);
       try {
-        // fetchNetworkStatus handles all fallbacks internally
-        const data = await fetchNetworkStatus();
+        // Call our API route instead of direct RPC (avoids CORS issues)
+        const response = await fetch('/api/network-status');
+        if (!response.ok) {
+          throw new Error(`API responded with status ${response.status}`);
+        }
+        const data: NetworkResponse = await response.json();
         setNetworkData(data);
       } catch (error) {
         console.error("Failed to load network data:", error);
-        // fetchNetworkStatus already returns simulation mode on failure
-        // But if it somehow throws, we'll create a minimal fallback
+        // Fallback to simulation mode
         const { getNodes } = await import("@/services/nodeService");
         setNetworkData({
           nodes: getNodes(),
